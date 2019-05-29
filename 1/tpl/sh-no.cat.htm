@@ -1,0 +1,252 @@
+<!-- {strip} -->
+{* без каталогов *}
+
+
+
+
+{if isset($smarty.session.now_user.now_price) && ( $smarty.session.now_user.now_price == 1 || $smarty.session.now_user.now_price == 0 ) }
+{$now_price = $smarty.session.now_user.now_price}
+{else}
+{$now_price = 2}
+{/if}
+
+
+
+
+<div class='container' >
+    <div class='row' >
+        <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center' >
+
+            {/strip}
+            <span style='background-color: yellow;padding:10px 20px;font-weight: bold; display:inline-block; margin: 10px 0;' >
+
+                {if $now_price == 0 }
+                Производится расчёт цены для сотрудников, спасибо что Вы с нами!
+
+                {elseif $now_price == 1 }
+                Производится расчёт цены для пайщика, спасибо что Вы с нами!
+
+                {else}
+                Для цены пониже, вам нужно вступить в кооператив 
+
+                <span>
+                    {if !isset($smarty.SESSION.now_user.id) }
+                    и <a href="" data-toggle="modal" data-target="#modal-enter"  >пройти авторизацию</a>
+                    {/if}
+                </span>
+
+                {/if}
+            </span>
+            {strip}
+        </div>
+    </div>
+</div>
+
+<form id="form_order2" action="" method="post">
+
+    <div id="form_order" class="form_top" >
+        <div>
+            <div id="form_order2" class="fixed_bottom">
+                <div id="form_ok" >
+
+                </div>
+                <div class="row" id="form_new">
+
+                    <div class="col-xs-6 col-md-4 col-sm-4 col-lg-3"><input placeholder="Как Вас зовут" name="fio" id="fio" class="form-control" type="text" required /></div>
+                    <div class="col-xs-6 col-md-4 col-sm-4 col-lg-3"><input placeholder="Телефон" name="phone" id="phone" class="form-control" type="text" required /></div>
+                    <div class="col-xs-6 col-md-4 col-sm-4 col-lg-2 text-center">Сумма&nbsp;заявки <b><span id="fin_itog">0</span>р</span></b>
+                        <input type="hidden" id="finsumm30" value="0" />
+                        <input type="hidden" name="id" value="{$now_mod.shop_id}" />
+                        <input type="hidden" name="s" value="{\Nyos\nyos::creatSecret($now_mod.shop_id)}" />
+                    </div>
+                    <div class="col-xs-6 col-md-4 col-sm-4 col-lg-2 text-center "><span id="ok_but_stat" ></span><input id="ok_but" class="btn btn-success" name="suba" value="Отправить" style="display:none" type="submit" /></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class='list_mag_ok' style="display:none;" >
+
+        <br/>
+        <br/>
+        <br/>
+
+        <center>
+
+            <h3>
+                Заявка отправлена, спасибо!
+                <br/>
+                <br/>
+                В ближайшее время ( с 10:00 - 18:00 ) позвоним
+            </h3>
+
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+
+        </center>
+    </div>
+
+
+    {*f\pa(\Nyos\mod\myshop::$shop)*}
+
+    {*$items = Nyos\mod\myshop::getItems($db, \Nyos\mod\myshop::$shop['data']['id'], 'no-cat' )*}
+    {$items = Nyos\mod\myshop::getItems($db, null, 'no-cat' )}
+
+    {*f\pa($items,3)*}
+
+    <br/>
+    <br/>
+
+    <div class='list_head' style='border-bottom:1px solid gray;' >
+        <div class='row'>
+
+            <div class='col-xs-12 col-sm-7 col-md-7 col-lg-7 name'>
+                Наименование
+            </div>
+
+            <div class='col-xs-6 col-sm-2 col-md-2 col-lg-1 text-center'>
+                {if $now_price == 2 }<b>{/if}
+                    Цена для сотрудников
+                    {if $now_price == 2 }</b>{/if}
+            </div>
+
+            <div class='col-xs-6 col-sm-2 col-md-2 col-lg-1 text-center'>
+                {if $now_price == 1 }<b>{/if}
+                    Цена для пайшиков
+                    {if $now_price == 1 }</b>{/if}
+            </div>
+
+            <div class='col-xs-6 col-sm-2 col-md-2 col-lg-1 text-center'>
+                {if $now_price == 0 }<b>{/if}
+                    Цена
+                    {if $now_price == 0 }</b>{/if}
+            </div>
+
+            <div class='col-xs-6 col-sm-2 col-md-2 col-lg-2 text-center'>
+            </div>
+        </div>
+    </div>
+
+    <div class='list_mag' >
+        {foreach $items as $k => $v }
+
+        <div class='row item'>
+            <div class='col-xs-12 col-sm-7 col-md-7 col-lg-7 name'>
+
+                <b>{$v.name}</b> ( {$v.opis} )
+
+                {if isset($v.ed_izm) && $v.ed_izm|count_characters:true > 0 }
+                <span class="ed_iz" >{$v.ed_izm}</span>
+                {/if}
+
+                <br/>
+
+                {if isset($v.opis2) && $v.opis2|count_characters:true > 0 }
+                <a href="http://{$v.opis2}" target="_blank" >{$v.opis2}</a>
+                {/if}
+
+                {/strip} {strip}
+
+                {if isset($v.opis3) && $v.opis3|count_characters:true > 0 }
+                <a href="http://{$v.opis3}" target="_blank" >{$v.opis3}</a>
+                {/if}
+
+                <br/>
+
+                {/strip}
+                {$v.price}р -  {$v.price1}р -  {$v.price2}р - 
+                {strip}
+
+            </div>
+
+            <div class='col-xs-6 col-sm-2 col-md-2 col-lg-1 price text-right'>
+                {if $now_price == 2 }<b>{/if}
+                    {if $v.price > 0}{$v.price}р{/if}
+                    {if $now_price == 2 }</b>{/if}
+            </div>
+
+            <div class='col-xs-6 col-sm-2 col-md-2 col-lg-1 price text-right'>
+                {if $now_price == 1 }<b>{/if}
+                    {if $v.price1 > 0}
+                    {$v.price1}р
+                    {else}
+                    -
+                    {/if}
+                    {if $now_price == 1 }</b>{/if}
+            </div>
+
+
+            <div class='col-xs-6 col-sm-2 col-md-2 col-lg-1 price text-right'>
+
+                {if $now_price == 0 }<b>{/if}
+                    {if $v.price2 > 0}{$v.price2}р{else}-{/if}
+                    <input type="hidden" id="summ{$k}" value="{$v.price2}" />
+                    {if $now_price == 0 }</b>{/if}
+
+            </div>
+
+
+
+            {if isset($now_price2) && $now_price2 === true }    
+
+            <div class='col-xs-6 col-sm-3 col-md-3 col-lg-2 but_bay'>
+                <nobr>
+                    <span rel="{$k}" rev="{$v.price2}" alt="10000" class="minus2 btn btn-xs btn-warning" value="-">-</span> 
+                    <input value="0" id="kolvo{$k}" class="kolvo" type="text"> 
+                    <input name="item[{$k}][kolvo]" value="0" id="kolvo2_{$k}" id="kolvo2" type="hidden" />
+                    <span rel="{$k}" rev="{$v.price2}" alt="10000" class="plus2 btn btn-xs btn-success" value="+">+</span>
+                    <input xname="item[{$k}][summa]" value="0" class="summa_cifra" id="summa{$k}" type="hidden">
+                    <span class="summa" id="summa_show{$k}"></span>
+                </nobr>
+            </div>
+
+            {elseif isset($now_price1) && $now_price1 === true }    
+
+            <div class='col-xs-6 col-sm-3 col-md-3 col-lg-2 but_bay'>
+                <nobr>
+                    <span rel="{$k}" rev="{$v.price1}" alt="10000" class="minus2 btn btn-xs btn-warning" value="-">-</span> 
+                    <input value="0" id="kolvo{$k}" class="kolvo" type="text"> 
+                    <input name="item[{$k}][kolvo]" value="0" id="kolvo2_{$k}" id="kolvo2" type="hidden" />
+                    <span rel="{$k}" rev="{$v.price1}" alt="10000" class="plus2 btn btn-xs btn-success" value="+">+</span>
+                    <input xname="item[{$k}][summa]" value="0" class="summa_cifra" id="summa{$k}" type="hidden">
+                    <span class="summa" id="summa_show{$k}"></span>
+                </nobr>
+            </div>
+
+            {else}
+
+            <div class='col-xs-6 col-sm-3 col-md-3 col-lg-2 but_bay'>
+
+                {if $v.price2 > 0}
+                <nobr>
+                    <span rel="{$k}" rev="{$v.price}" alt="10000" class="minus2 btn btn-xs btn-warning" value="-">-</span> 
+                    <input value="0" id="kolvo{$k}" class="kolvo" type="text"> 
+                    <input name="item[{$k}][kolvo]" value="0" id="kolvo2_{$k}" id="kolvo2" type="hidden" />
+                    <span rel="{$k}" rev="{$v.price}" alt="10000" class="plus2 btn btn-xs btn-success" value="+">+</span>
+                    <input xname="item[{$k}][summa]" value="0" class="summa_cifra" id="summa{$k}" type="hidden">
+                    <span class="summa" id="summa_show{$k}"></span>
+                </nobr>
+                {/if}
+
+            </div>
+
+            {/if}
+
+
+
+
+        </div>
+        {/foreach}
+    </div>
+
+</form>
+
+
+{*f\pa($items,2)*}
+
+<script src="/js/numberformat.js"></script>
+
+<!-- {/strip} -->
