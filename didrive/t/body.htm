@@ -1,0 +1,138 @@
+<!-- {strip} -->
+
+<div class="container-fluid" >
+    <div class="grid">
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <a onclick="$('#add1').toggle('slow');return false;" href="" class="btn btn-xs btn-success"  type="button" style="float:right;">Добавить доступ</a>
+                <h3>Доп. доступ к Didrive</h3>
+
+                <br clear="all" />
+                
+                <div id="add1" style="display:none; max-width: 500px; margin: 0 auto; padding:2rem;" class="bg-light shadow">
+                    <div class="container-fluid">
+                        <form action="" method="POST" >
+
+                            <div class="row">
+                            <div class="col-xs-12 col-lg-12">
+                                <h3>Добавление доступа</h3>
+                            </div>
+                            </div>
+                            <div class="form-group row">
+                                <span class="col-sm-4 text-right" >Логин</span>
+                                <input type="text" class="col-sm-8 form-control" id="a1" xaria-describedby="emailHelp" placeholder="" name="add_login[login]" >
+                                {*
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                *}
+                            </div>
+                            <div class="form-group row">
+                                <span class="col-sm-4 text-right" >пароль</span>
+                                <input type="text" class="col-sm-8 form-control" id="a1" xaria-describedby="emailHelp" placeholder=""  name="add_login[pass]" >
+                                {*
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                *}
+                            </div>
+                            <div class="form-group row">
+                                <span class="col-sm-4 text-right" >E-mail</span>
+                                <input type="text" class="col-sm-8 form-control" id="a1" xaria-describedby="emailHelp" placeholder="" name="add_login[mail]" >
+                                {*
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                *}
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="float:right;">Добавить</button>
+                            <br clear="all" />
+                        </form>
+                    </div>
+                </div>                
+
+            </div>
+        </div>
+
+
+
+
+
+
+        {$list_user = Nyos\mod\lk::getUsers($db,"`$folder`_di")}
+        {*f\pa($list_user,2)*}
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>дата регистрации</th>
+                            <th>ФИО, соц сеть</th>
+                            <th>Доступ к дидрайв</th>
+                            <th>Обозначение аккаунта для пользователей</th>
+                    </thead>
+                    <tbody>
+                        {foreach $list_user as $k => $v }
+                        <tr class="act" >
+                            <td>
+                                {$v.dt} 
+                                <br/>
+                                <a href="#" class="delete" >удалить доступ</a>
+
+                            </td>
+                            <td>
+                                {if isset($v.login)} 
+                                Логин: <b>{$v.login}</b>
+                                <br/>
+                                <a href="#" style="color:blue;">сменить пароль</a>
+                                {else}
+                                {$v.name} 
+                                <br/>
+                                {$v.family}{/strip} {strip}
+                                <a href="{$v.soc_web_link}"  style="color:blue;" target="_blank" >{$v.soc_web}</a>
+                                {/if}
+                                
+                                
+                            </td>
+                            <td>
+                                {if $v.access == 'admin'}
+                                Администратор                        
+                                {else}
+                                <select class='form-control save_edit_select' 
+                                        action='/didrive/ajax.php' 
+                                        pole="access" 
+                                        table="gm_user" 
+                                        rev='{$k}' 
+                                        >
+                                    <option value='block' s='{Nyos\nyos::creatSecret("gm_user-access-`$k`block")}' 
+                                            {if isset($v.access) && $v.access == 'block'}selected="selected"{/if}
+                                            >
+                                            Доступ закрыт</option>
+                                    <option value='moder' s='{Nyos\nyos::creatSecret("gm_user-access-`$k`moder")}' 
+                                            {if isset($v.access) && $v.access == 'moder'}selected="selected"{/if}
+                                            >
+                                            Доступ открыт</option>
+                                </select>
+                                {/if}
+                            </td>
+                            <td>
+                                {if $v.access != 'admin'}
+                                <input type='text' max='99' min='1' 
+                                       class="edit_pole form-control" 
+                                       table="gm_user"
+                                       name='name'
+                                       rev="{$k}"
+                                       value='{$v.name}' 
+                                       folder='{$folder}_di' 
+                                       s='{\Nyos\nyos::creatSecret("edit_pole-gm_user-name-`$k`")}' 
+                                       style="x-width:50px;" />
+                                {/if}
+                            </td>
+                        </tr>
+                        {/foreach}
+                    </tbody>     
+                </table>     
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- {/strip} -->
+
