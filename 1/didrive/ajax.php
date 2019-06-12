@@ -1,178 +1,115 @@
 <?php
 
-//namespace Nyos\mod;
-//
-//use Nyos\mod\lk as lk;
-//$_SESSION['status1'] = true;
-
-if (isset($_SESSION['status1']) && $_SESSION['status1'] === true) {
-    ini_set('display_errors', 'On'); // сообщения с ошибками будут показываться
-    error_reporting(E_ALL); // E_ALL - отображаем ВСЕ ошибки
-}
+ini_set('display_errors', 'On'); // сообщения с ошибками будут показываться
+error_reporting(E_ALL); // E_ALL - отображаем ВСЕ ошибки
 
 date_default_timezone_set("Asia/Yekaterinburg");
 define('IN_NYOS_PROJECT', true);
 
-// sleep(1);
+require $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+require( $_SERVER['DOCUMENT_ROOT'] . '/all/ajax.start.php' );
 
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.site/0.cfg.start.php' );
-
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/index.session_start.php' );
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/class/nyos.2.php' );
-require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/f/ajax.php' );
-
-
-// отправляем заказ админу
-// send_order	y
-if (isset($_REQUEST['send_order'])) {
-
-    if (sizeof($_REQUEST['item_select']) == 0)
-        f\end2('Обнаружен недочёт: В заказе нет товаров', false);
-
-    // foreach( )
-    require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/sql.start.php');
-
-    require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.site/exe/myshop/class.php');
-    require_once( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'f' . DS . 'txt.2.php' );
-
-    $list = \Nyos\mod\myshop::getItems($db, $_REQUEST['shop']);
-    //f\pa($list);
-
-    require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/class/mail.2.php' );
-
-    // $emailer->ns_new($sender2, $adrsat);
-    // $emailer->ns_send('сайт ' . domain . ' > новое сообщение', str_replace($r1, $r2, $ctpl->tpl_files['bw.mail.body']));
-    //$status = '';
-
-    $info = '<blockquote style="border;left: 3px solid gray; padding-left: 15px; color: black; line-height:30px;" >ФИО: ' . addslashes($_REQUEST['fio']) . '<br/>'
-            . 'Тел: ' . addslashes($_REQUEST['phone'])
-            . ( isset($_REQUEST['mail']{0}) ? '<br/>'
-            . 'E-mail: <a href="mailto:' . addslashes($_REQUEST['mail']) . '">' . addslashes($_REQUEST['mail']) . '</a>' : '' )
-            . ( isset($_REQUEST['adres']{0}) ? '<br/>'
-            . 'Адрес: ' . addslashes($_REQUEST['adres']) : '' )
-            . '</blockquote>'
-            . '<br/>'
-            . '<br/>'
-            . '<style>'
-            . 'table.list td{ padding: 10px; }'
-            . 'table.list tr:nth-child(2n) td{ background-color: #f3f3f3; }'
-            . '.r{ text-align:right; }'
-            . '.w{background-color:white; padding:2px;}'
-            . '</style>'
-            . '<table width="100%" class="list" >'
-            . '<tr>'
-            . '<th>Наименование</th>'
-            . '<th width="1%" >Цена</th>'
-            . '<th width="1%" >Кол-во</th>'
-            . '<th width="1%" >Сумма</th>'
-            . '</tr>';
-
-    $sum = 0;
-    foreach ($_REQUEST['kolvo'] as $k => $v) {
-        if ($v > 0 && isset($_REQUEST['item_select'][$k]) && isset(Nyos\mod\myshop::$items[$k])) {
-
-            if (isset($_SESSION['on_cart'][$k]))
-                unset($_SESSION['on_cart'][$k]);
-
-            $info .= '<tr>'
-                    . '<td><span class="w">#' . Nyos\mod\myshop::$items[$k]['id'] . '</span> <b>' . Nyos\mod\myshop::$items[$k]['name'] . '</b>'
-                    . '<br/><small>' . Nyos\mod\myshop::$items[$k]['opis'] . '</small></td>'
-                    . '<td class="r">' . number_format(Nyos\mod\myshop::$items[$k]['price'], 0, '', '`') . '</td>'
-                    . '<td>' . $v . '</td>'
-                    . '<td class="r">' . number_format(ceil($v * Nyos\mod\myshop::$items[$k]['price']), 0, '', '`') . '</td>'
-                    . '</tr>';
-            $sum += $v * Nyos\mod\myshop::$items[$k]['price'];
-        }
-    }
-
-    $info .= '<tr>'
-            . '<th style="text-align:right;" colspan="3" >Итого:</th>'
-            . '<th>' . number_format($sum, 0, '', '`') . '</th>'
-            . '</tr>';
-
-    $info .= '</table>';
-
-    Nyos\mod\mailpost::sendNow($db, 'support@uralweb.info', '1@uralweb.info', 'Новый заказ в интернет магазине', 'nexit_myshop', array('text' => $info));
-
-    //echo $status;
-
-
-    f\end2('Заказ сформирован, спасибо! в ближайшее время позвоним уточнить детали заказа');
+if (
+        ( isset($_REQUEST['id']{0}) && isset($_REQUEST['s']{5}) && \Nyos\nyos::checkSecret($_REQUEST['s'], $_REQUEST['id']) === true ) ||
+        ( isset($_REQUEST['id2']{0}) && isset($_REQUEST['s2']{5}) && \Nyos\nyos::checkSecret($_REQUEST['s2'], $_REQUEST['id2']) === true )
+) {
+    
 }
-// добавление в корзину
-elseif (isset($_REQUEST['type']) && $_REQUEST['type'] == 'add_to_cart' && isset($_REQUEST['id'])) {
-    
-    $_SESSION['on_cart'][$_REQUEST['id']] = array( 'kolvo' => 1, 'options' => serialize($_REQUEST['select_option']) );
-    
-    \f\end2('ок', true);
+//
+else {
+
+//    $e = '';
+//    foreach ($_REQUEST as $k => $v) {
+//        $e .= '<Br/>' . $k . ' - ' . $v;
+//    }
+
+    f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору ' . $e // . $_REQUEST['id'] . ' && ' . $_REQUEST['secret']
+            , 'error');
 }
-// удаление из корзины
-elseif (isset($_REQUEST['type']) && $_REQUEST['type'] == 'edit_kolvo_in_cart' && isset($_REQUEST['item'])) {
 
-    if (isset($_SESSION['on_cart'][$_REQUEST['item']]))
-        $_SESSION['on_cart'][$_REQUEST['item']]['kolvo'] = $_REQUEST['new_kolvo'];
+//ob_start('ob_gzhandler');
+//\f\pa($_POST);
+//$r = ob_get_contents();
+//ob_end_clean();
 
-    \f\end2('ок', true);
+if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'edit_moder_option') {
+
+    if( !class_exists('\Nyos\mod\AdminAccess') )
+        require_once DR.'/vendor/didrive_mod/admin_access/class.php';
+    
+    // echo $_REQUEST['id'];
+    
+    \Nyos\mod\AdminAccess::setModerAccess($db, $vv['folder'], $_REQUEST['id'], $_REQUEST['mod'] );
+    
+    \f\end2('ранее имеющиеся доступы удалены и добавлены отмеченные, специалист может заходить');
 }
-// удаление из корзины
-elseif (isset($_REQUEST['type']) && $_REQUEST['type'] == 'remove_from_cart' && isset($_REQUEST['id'])) {
 
-    if (isset($_SESSION['on_cart'][$_REQUEST['id']]))
-        unset($_SESSION['on_cart'][$_REQUEST['id']]);
+//\f\end2('что то пошло не так',false);
+\f\end2('тарам пам пам'.$r);
 
-    \f\end2('ок', true);
-}
-// надпись для информера корзины
-elseif (isset($_REQUEST['type']) && $_REQUEST['type'] == 'get_nadpis_for_cart') {
+if (isset($_GET['action']) && $_GET['action'] == 'edit_moder_option') {
 
-    if( !isset($_SESSION['on_cart']) )
-    $_SESSION['on_cart'] = array();
-    
-    require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/f/txt.2.php' );
-    $kolvo = sizeof($_SESSION['on_cart']);
+    // f\pa($now);
+    // \f\pa($now, 2);
 
-    require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/sql.start.php');
-    require_once $_SERVER['DOCUMENT_ROOT'] . '/0.site/exe/myshop/class.php';
-    $items = Nyos\mod\myshop::getItems($db, $_REQUEST['shop']);
-    // f\pa($items);
-    // cart_price
-    // f\pa($_REQUEST['active_items']);
-    
-        $sum = 0;
-    
-    if (isset($_REQUEST['active_items']{0})) {
+    $amnu = Nyos\nyos::get_menu($now['folder']);
+    // \f\pa($amnu);
 
-        $r = explode(',', $_REQUEST['active_items']);
-        $active = array();
-        //echo '<pre>'; print_r($r); echo '</pre>';
-        foreach ($r as $k => $v) {
-            $active[$v] = 1;
-        }
+    if (isset($amnu) && sizeof($amnu) > 0) {
 
-        foreach ($_SESSION['on_cart'] as $k => $v) {
-            if (isset($active[$k]) && isset($items[$k]['price']))
-                $sum += ceil($v['kolvo'] * $items[$k]['price']);
-        }
-    }else {
+        foreach ($amnu as $k1 => $v1) {
 
-        if (isset($_SESSION['on_cart']) && sizeof($_SESSION['on_cart']) > 0) {
-            foreach ($_SESSION['on_cart'] as $k => $v) {
-                if (isset($items[$k]['price']))
-                    $sum += ceil($v['kolvo'] * $items[$k]['price']);
+            //echo '<br/>'.__LINE__.' '.$k1;
+
+            if (isset($v1['type']) && $v1['type'] == 'myshop' && isset($v1['version']) && $v1['version'] == 1) {
+
+                // echo '<br/>' . __LINE__ . ' ' . $k1;
+
+                if (isset($v1['datain_name_file']) && file_exists($_SERVER['DOCUMENT_ROOT'] . DS . '9.site' . DS . $now['folder'] . DS . 'download' . DS . 'datain' . DS . $v1['datain_name_file'])) {
+
+                    //f\pa($v1);
+                    //f\pa($amnu[$_GET['level']] );
+                    require_once $_SERVER['DOCUMENT_ROOT'] . '/0.site/exe/myshop/class.php';
+                    require_once $_SERVER['DOCUMENT_ROOT'] . '/0.site/exe/myshop_admin/class.php';
+
+                    $e = \Nyos\mod\myshop::getShopFromDomain($db);
+                    // f\pa($e);
+
+                    $e2 = \Nyos\mod\MyShopAdmin::loadDataFileForShop($db, $e['data']['id'], $_SERVER['DOCUMENT_ROOT'] . DS . '9.site' . DS . $now['folder'] . DS . 'download' . DS . 'datain' . DS . $v1['datain_name_file']);
+                    // echo $e2;
+                    // $e3 = json_decode($e2)
+
+                    if (file_exists($_SERVER['DOCUMENT_ROOT'] . DS . '9.site' . DS . $now['folder'] . DS . 'download' . DS . 'datain' . DS . $v1['datain_name_file'] . '.delete'))
+                        unlink($_SERVER['DOCUMENT_ROOT'] . DS . '9.site' . DS . $now['folder'] . DS . 'download' . DS . 'datain' . DS . $v1['datain_name_file'] . '.delete');
+
+                    rename($_SERVER['DOCUMENT_ROOT'] . DS . '9.site' . DS . $now['folder'] . DS . 'download' . DS . 'datain' . DS . $v1['datain_name_file']
+                            , $_SERVER['DOCUMENT_ROOT'] . DS . '9.site' . DS . $now['folder'] . DS . 'download' . DS . 'datain' . DS . $v1['datain_name_file'] . '.delete');
+
+                    if ($e2['status'] == 'ok') {
+                        die('++ ' . $e2['html']);
+                    } else {
+                        die('-- ' . $e2['html']);
+                    }
+                }
             }
         }
     }
-
-    // $_SESSION['on_cart'][$_REQUEST['id']] = 1;
-    \f\end2('ок', true, array('nadpis' => $kolvo . ' товар' . \f\txt_okonchanie($kolvo), 'summa' => ( $sum == 0 ? '' : number_format($sum, 0, '', ' ') . ' Р') ) );
 }
-
-\f\end2('Неописуемая ситуация #' . __LINE__, false);
 
 // проверяем секрет
 if (
+        (
         isset($_REQUEST['id']{0}) && isset($_REQUEST['s']{5}) &&
         Nyos\nyos::checkSecret($_REQUEST['s'], $_REQUEST['id']) === true
+        ) || (
+        isset($_REQUEST['show']{0}) &&
+        isset($_REQUEST['id']{0}) && isset($_REQUEST['s']{5}) &&
+        Nyos\nyos::checkSecret($_REQUEST['s'], $_REQUEST['show'] . $_REQUEST['id']) === true
+        ) || (
+        isset($_REQUEST['action']{0}) &&
+        isset($_REQUEST['id']{0}) && isset($_REQUEST['s']{5}) &&
+        Nyos\nyos::checkSecret($_REQUEST['s'], $_REQUEST['action'] . $_REQUEST['id']) === true
+        )
 ) {
     
 }
@@ -189,7 +126,76 @@ require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.all/sql.start.php');
 //require( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'db.connector.php' );
 
 
-if (isset($_REQUEST['types']) && $_REQUEST['types'] == 'send_order') {
+if (isset($_REQUEST['show']) && $_REQUEST['show'] == 'show_admin_option_cat') {
+
+    /*
+      require_once( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'f' . DS . 'db.2.php' );
+     * */
+    require_once( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'f' . DS . 'txt.2.php' );
+    /*
+      // $_SESSION['status1'] = true;
+      // $status = '';
+      \f\db\db_edit2($db, 'mitems', array('id' => (int) $_POST['id']), array($_POST['pole'] => $_POST['val']));
+
+      // f\end2( 'новый статус ' . $status);
+      f\end2('новый статус ' . $_POST['val']);
+     */
+
+//$_SESSION['status1'] = true;
+//$status = '';
+    $sql = $db->sql_query('SELECT
+        m_myshop_cats_option.id AS option_id,
+        m_myshop_cats_option_var.id,
+        m_myshop_cats_option.name,
+        
+        `m_myshop_cats_option`.`status` AS `opt_status`,
+        `m_myshop_cats_option_var`.`status`,
+        
+        `m_myshop_cats_option`.`sort` AS `opt_sort`,
+        `m_myshop_cats_option_var`.`sort`,
+        
+        m_myshop_cats_option_var.var,
+        m_myshop_cats_option_var.var_number,
+        m_myshop_cats_option_var.var_number2
+      FROM m_myshop_cats
+        INNER JOIN m_myshop_cats_option
+          ON m_myshop_cats_option.id_cat = m_myshop_cats.id
+        INNER JOIN m_myshop_cats_option_var
+          ON m_myshop_cats_option_var.id_option = m_myshop_cats_option.id
+      WHERE m_myshop_cats.id = \'' . addslashes($_REQUEST['id']) . '\'
+      ORDER BY 
+        m_myshop_cats_option.sort DESC
+        ,m_myshop_cats_option_var.sort DESC
+      ;');
+//echo $status;
+
+    $va = array(
+        'cat' => $_REQUEST['id']
+        , 'res_div' => '#option_' . $_REQUEST['id']
+        , 'res_key' => $_REQUEST['id']
+        , 'res_s' => $_REQUEST['s']
+    );
+
+    // $t = '';
+
+    while ($r = $db->sql_fr($sql)) {
+        $va['items'][] = $r;
+        /*
+          $t .= '<hr>';
+
+          foreach ($r as $k1 => $v1) {
+          $t .= $k1 . ' - ' . $v1 . '<br/>';
+          }
+         */
+    }
+
+    // f\pa($res);
+    // body.cats.ajax.option.htm
+
+    f\end2(\f\compileSmarty(dirname(__FILE__) . DS . 'didrive' . DS . 't' . DS . 'body.cats.ajax.option.htm', $va), true);
+}
+//
+elseif (isset($_REQUEST['types']) && $_REQUEST['types'] == 'send_order') {
 
     require_once( $_SERVER['DOCUMENT_ROOT'] . '/0.site/exe/myshop/class.php');
     require_once( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'f' . DS . 'txt.2.php' );
@@ -236,14 +242,51 @@ if (isset($_REQUEST['types']) && $_REQUEST['types'] == 'send_order') {
 
     $info .= '</table>';
 
-    Nyos\mod\mailpost::sendNow($db, 'support@uralweb.info', '1@uralweb.info', 'Новый заказ в интернет магазине', 'nexit_myshop', array('text' => $info));
+    Nyos\mod\mailpost::sendNow($db, 'support@uralweb.info', '1@uralweb.info, anastasia7785@mail.ru', 'Новый заказ в интернет магазине', 'nexit_myshop', array('text' => $info));
 
     //echo $status;
 
     f\end2('Заявка отправлена, в ближайшее время позвоним уточнить заказ');
 
     //f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору', 'error');
-} elseif (isset($_POST['action']) && $_POST['action'] == 'edit_pole') {
+}
+
+// добавление каталога с опциями для товаров в каталог
+elseif (isset($_REQUEST['action']) && $_REQUEST['action'] == 'add_cat_options') {
+
+    if (isset($_REQUEST['opt_name']{2}) && isset($_REQUEST['opt_vars']{3})) {
+
+        $vars = explode(PHP_EOL, $_REQUEST['opt_vars']);
+
+        $e = array();
+
+        foreach ($vars as $k => $v) {
+            // $e .= ' '.$v;    
+            $e[] = array('var' => $v);
+        }
+
+
+        //$_SESSION['status1'] = true;
+        //$status = '';
+        $new_opt = \f\db\db2_insert($db, 'm_myshop_cats_option', array(
+            'id_cat' => $_REQUEST['id']
+            , 'name' => $_REQUEST['opt_name']
+            , 'hand_select' => $_REQUEST['hand_select']
+                ), 'da', 'last_id');
+        //echo $status;
+        \f\db\sql_insert_mnogo($db, 'm_myshop_cats_option_var', $e, array('id_option' => $new_opt), true);
+
+        f\end2('ОКЕЙ, добавили. Перезагружаю список опций.', true, array(
+            'res_div' => $_REQUEST['res_div']
+            , 'res_key' => $_REQUEST['res_key']
+            , 'res_s' => $_REQUEST['res_s']
+        ));
+    }
+
+    f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору', 'error');
+}
+//
+elseif (isset($_POST['action']) && $_POST['action'] == 'edit_pole') {
 
     require_once( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'f' . DS . 'db.2.php' );
     require_once( $_SERVER['DOCUMENT_ROOT'] . DS . '0.all' . DS . 'f' . DS . 'txt.2.php' );
@@ -255,8 +298,7 @@ if (isset($_REQUEST['types']) && $_REQUEST['types'] == 'send_order') {
     // f\end2( 'новый статус ' . $status);
     f\end2('новый статус ' . $_POST['val']);
 }
-
-
+//
 f\end2('Произошла неописуемая ситуация #' . __LINE__ . ' обратитесь к администратору', 'error');
 
 
