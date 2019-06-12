@@ -74,8 +74,16 @@ display: inline-block;
 	font-weight: normal;
 }
 .items_opt label:HOVER{
-rgba(0,0,0,0.1);
+    rgba(0,0,0,0.1);
 }
 
 .act .delete{ display:none;}
 .act:hover .delete{ display:inline; color:red; }
+
+.checkbox50{ display: block; }
+
+.checkbox50{ line-height: 20px;}
+
+.warn{ padding: 3px; }
+.warn.warn{ background-color: red; }
+.warn.good{ background-color: #ccff99; }

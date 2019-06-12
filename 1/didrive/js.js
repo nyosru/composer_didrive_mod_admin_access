@@ -315,4 +315,67 @@ $().ready(function () {
         return false;
     });
 
+
+    $('body .moder_option').on('submit', function (event) {
+
+        event.preventDefault();
+
+        /* <input class="edit_item" type="button" rel="{$k1}" alt="status" rev="delete" value="Удалить" /> */
+        var $user_id = $(this).attr('user_id');
+//        var $val = $(this).attr('rev');
+//        var $id = $(this).attr('rel');
+//        var $s = $(this).attr('s');
+        var $div_res = $('#' + $(this).attr('for_res'));
+
+        //alert( $div_res );
+
+        var $ff = $(this).serialize();
+
+        $.ajax({
+
+            type: 'POST',
+            url: '/vendor/didrive_mod/admin_access/1/didrive/ajax.php',
+            dataType: 'json',
+            data: $ff,
+
+            // сoбытиe дo oтпрaвки
+            beforeSend: function ($data) {
+                // $div_res.html('<img src="/img/load.gif" alt="" border="" />');
+                $div_res.html('... обрабатываю ...');
+            },
+
+            // сoбытиe пoслe удaчнoгo oбрaщeния к сeрвeру и пoлучeния oтвeтa
+            success: function ($data) {
+
+                // eсли oбрaбoтчик вeрнул oшибку
+                if ($data['error'])
+                {
+                    // alert($data['error']); // пoкaжeм eё тeкст
+                    $div_res.html('<div class="warn warn">' + $data['html'] + '</div>');
+                }
+                // eсли всe прoшлo oк
+                else
+                {
+                    $div_res.html('<div class="warn good">' + $data['html'] + '</div>');
+                }
+
+            },
+            // в случae нeудaчнoгo зaвeршeния зaпрoсa к сeрвeру
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status); // пoкaжeм oтвeт сeрвeрa
+                alert(thrownError); // и тeкст oшибки
+            }
+            /*
+             // сoбытиe пoслe любoгo исхoдa
+             ,complete: function ($data) {
+             // в любoм случae включим кнoпку oбрaтнo
+             // $form.find('input[type="submit"]').prop('disabled', false);
+             }
+             */
+
+        }); // ajax-
+
+        return false;
+    });
+
 });
