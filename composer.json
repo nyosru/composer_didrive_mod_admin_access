@@ -1,7 +1,7 @@
 {
     "name": "didrive_mod/admin_access",
     "description": "Модуль для Didrive - admin_access - управление пользователями",
-    "version": "1.0.0",
+    "version": "1.0.1",
     
     "keywords": [
         "didrive", "module", "nyos", "uralweb.info"
@@ -19,10 +19,8 @@
     "license": "MIT",
     "require": {
         "php": ">=7.1.0"
-        ,
-        "twig/twig": ">=2.10.0"
-        ,
-        "didrive_mod/lk": ">=0.0.1"
+        , "twig/twig": ">=2.10.0"
+        , "didrive_mod/lk": ">=0.0.1"
     }
     
     ,

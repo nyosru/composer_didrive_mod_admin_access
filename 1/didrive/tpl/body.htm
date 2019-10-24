@@ -87,6 +87,14 @@
                     </thead>
                     <tbody>
 
+                        {#
+                            <tr class="act" >
+                                <td rowspan="2">
+                                    {{ pa(post) }}
+                                </td>
+                            </tr>                        
+                        #}
+                            
                         {% for k, v in list_user %}
 
                             <tr class="act" >
@@ -95,7 +103,21 @@
                                     {% if v.login is defined and v.login|length > 2  %} 
                                         Логин: <b>{{ v.login }}</b> <sup>{{ k }}</sup>
                                         <br/>
-                                        <a href="#" style="color:blue;">сменить пароль</a>
+                                        
+                                        <a href="#" 
+                                           onclick="$('#ff{{ k }}').toggle();return false;"
+                                           style="color:blue;">сменить пароль</a>
+                                        
+                                        <form action="" method="post" id="ff{{ k }}" style="display:none;" >
+
+                                            <input type="text" name="pass" value="" >
+                                            <input type="hidden" name="s" value="{{ creatSecret(k) }}" >
+                                            <input type="hidden" name="id" value="{{ k }}" >
+                                            <br/>
+                                            <input type="submit" name="set_new_pass" value="установить" >
+                                            
+                                        </form>
+                                        
                                     {% else %}
                                         {{ v.family }} {{ v.name }} <sup>{{ k }}</sup> <br/>
                                         <a href="{{ v.soc_web_link }}"  style="color:blue;" target="_blank" >{{ v.soc_web }}</a>
