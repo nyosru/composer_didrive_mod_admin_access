@@ -74,16 +74,27 @@ display: inline-block;
 	font-weight: normal;
 }
 .items_opt label:HOVER{
-    rgba(0,0,0,0.1);
+    background-color: rgba(0,0,0,0.1);
 }
 
 .act .delete{ display:none;}
 .act:hover .delete{ display:inline; color:red; }
 
-.checkbox50{ display: block; }
+.checkbox50{ display: block; 
+    padding:10px;
+    margin: 1px 0 0 0;
+    background-color: rgba( 0, 0, 0 , 0.05 ); 
+}
 
-.checkbox50{ line-height: 20px;}
+x.checkbox50{ xline-height: 20px; }
+
+.checkbox50.ok{ 
+    background-color: rgba( 0, 255, 0 , 0.2 ); 
+}
+
 
 .warn{ padding: 3px; }
 .warn.warn{ background-color: red; }
 .warn.good{ background-color: #ccff99; }
+
+

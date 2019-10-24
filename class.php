@@ -24,15 +24,46 @@ class AdminAccess {
             $rows[] = array('module' => $k);
         }
 
-        \f\db\sql_insert_mnogo($db, 'gm_user_di_mod', $rows, array( 'folder' => $folder, 'user_id' => $user, 'mode' => 'moder' ) );
+        \f\db\sql_insert_mnogo($db, 'gm_user_di_mod', $rows, array('folder' => $folder, 'user_id' => $user, 'mode' => 'moder'));
     }
 
-    public static function getModerAccess($db, string $folder, int $user) {
+    public static function getModerAccess($db, $folder = null, $user = null) {
 
-        $ff = $db->prepare('SELECT * FROM `gm_user_di_mod` WHERE `folder` = :folder AND `user_id` = :user ');
-        $ff->execute(array(':folder' => $folder, ':user' => $user));
-        return $ff->fetch();
+        if ($folder === null)
+            $folder = \Nyos\Nyos::$folder_now;
 
+        if (empty($user)) {
+
+            $ff = $db->prepare('SELECT * FROM `gm_user_di_mod` WHERE `folder` = :folder ');
+            $ff->execute(array(':folder' => $folder ) );
+            $e = $ff->fetchAll();
+
+            $return = [];
+
+            foreach ($e as $k => $v) {
+                if (isset($v['module'])) {
+                    $return[$v['user_id']][$v['module']] = $v;
+                }
+            }
+            
+        } else {
+
+            $ff = $db->prepare('SELECT * FROM `gm_user_di_mod` WHERE `folder` = :folder AND `user_id` = :user ');
+            $ff->execute(array(':folder' => $folder, ':user' => $user));
+            $e = $ff->fetchAll();
+
+            $return = [];
+
+            foreach ($e as $k => $v) {
+                if (isset($v['module'])) {
+                    $return[$v['module']] = $v;
+                }
+            }
+
+        }
+        //\f\pa($_SESSION);
+
+        return $return;
     }
 
 //    

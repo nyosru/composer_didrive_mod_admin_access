@@ -1,7 +1,7 @@
 {
     "name": "didrive_mod/admin_access",
     "description": "Модуль для Didrive - admin_access - управление пользователями",
-    "version": "0.0.4",
+    "version": "1.0.0",
     
     "keywords": [
         "didrive", "module", "nyos", "uralweb.info"

@@ -1,5 +1,6 @@
 <?php
 
+// echo '<br/>'.__FILE__.' ['.__LINE__.']';
 
     if (isset($_POST['add_login'])) {
 
@@ -27,7 +28,6 @@ $vv['krohi'][1] = array(
     'uri' => $vv['now_level']['cfg.level']
 );
 
-$vv['list_user'] = \Nyos\mod\lk::getUsers($db, $vv['folder'] . '_di');
 
 //echo dir_mods_mod_vers_didrive_tpl;
 //echo '<br/>';
