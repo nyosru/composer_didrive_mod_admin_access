@@ -1,0 +1,173 @@
+{% spaceless %}
+
+    <tr class="act" >
+        <td rowspan="2" style="border-top: 2px solid orange; border-left: 2px solid orange; " >
+            {{ v.id }}
+            {{ v.dt }}
+            {#
+            <br/>
+            <a href="#" class="delete" >удалить доступ</a>
+            #}
+
+        </td>
+        <td>
+            {% if v.login is defined and v.login|length > 2  %} 
+                Логин: <b>{{ v.login }}</b>
+                <br/>
+                <a href="#" style="color:blue;">сменить пароль</a>
+            {% else %}
+                {{ v.family }} {{ v.name }} <br/>
+                <a href="{{ v.soc_web_link }}"  style="color:blue;" target="_blank" >{{ v.soc_web }}</a>
+            {% endif %}
+
+        </td>
+        <td>
+
+            {#
+            {% set k12 = '123' %}
+            {% set ee = 'gm_user-access-' ~ k12 ~ '-block' %}
+            {{ ee }}
+            #}
+            {# { creatSecret( 'gm_user-access-' ~ k ~ '-block' ) } #}
+
+            <select class='form-control base__select__send_data_ajax'
+
+                    ajax_go='/vendor/didrive/f/micro-service/db-edit.php'
+
+                    table="gm_user"
+                    pole="access"
+                    item_id="{{ v.id }}" 
+                    {#s = $in['table'] . '-' . $in['pole'] . '-' . $in['item_id'] . '-' . $in['value']#}
+
+                    >
+                <option value='block' s='{{ creatSecret( 'gm_user-access-' ~ v.id ~ '-block' ) }}' 
+                        {% if v.access is defined and v.access == 'block' %} selected="selected" {% endif %} >
+                    Доступ закрыт</option>
+                <option value='admin' s='{{ creatSecret( 'gm_user-access-' ~ v.id ~ '-admin' ) }}' 
+                        {% if v.access is defined and v.access == 'admin' %} selected="selected" {% endif %} >
+                    Полный доступ ( администратор )</option>
+                <option value='moder' s='{{ creatSecret( 'gm_user-access-' ~ v.id ~ '-moder' ) }}' 
+                        {% if v.access is defined and v.access == 'moder' %} selected="selected" {% endif %} >
+                    Ограниченный доступ ( модератор )</option>
+            </select>
+
+        </td>
+        <td>
+
+            {% if v.access == 'moder' %}
+                <br/>
+                type2</br>
+                <input type='text' 
+                       class="form-control didrive__edit_items_dop_pole" 
+                       ajax_go='/vendor/didrive/f/micro-service/db-edit.php'
+
+                       table="gm_user"
+                       pole='admin_status'
+                       item_id="{{ v.id }}"
+                       value='{{ v.admin_status }}' 
+                       {#folder='{{ folder }}_di'#}
+
+                       s='{{ creatSecret( 'gm_user-admin_status-' ~ v.id ) }}' 
+
+                       />
+                <small>buh бухгалтер</small>
+                <br/>
+            {% endif %}
+
+            {% if v.access != 'admin' or 1 == 1 %}
+                имя
+                <input type='text' max='99' min='1' 
+                       class="edit_pole form-control" 
+                       table="gm_user"
+                       name='name'
+                       rev="{{ k }}"
+                       value='{{ v.name }}' 
+                       folder='{{ folder }}_di' 
+                       s='{{ creatSecret( 'edit_pole-gm_user-name-' ~ k ) }}' 
+                       style="x-width:50px;" />
+            {% endif %}
+
+        </td>
+        <td>
+
+            {% set pole7 = 'status' %}
+            <select class='form-control base__select__send_data_ajax'
+
+                    ajax_go='/vendor/didrive/f/micro-service/db-edit.php'
+
+                    table="gm_user"
+                    pole="{{ pole7 }}"
+                    item_id="{{ v.id }}" 
+                    {#s = $in['table'] . '-' . $in['pole'] . '-' . $in['item_id'] . '-' . $in['value']#}
+
+                    >
+                
+                {% set dd = 'delete' %}
+                {% set dd_name = 'Отключена' %}
+                <option value='{{ dd }}' s='{{ creatSecret( 'gm_user-' ~ pole7 ~ '-' ~ v.id ~ '-'~ dd ) }}' 
+                        {% if v[pole7] is defined and v[pole7] == dd %} selected="selected" {% endif %} >
+                    {{ dd_name }}</option>
+                
+                {% set dd = 'new' %}
+                {% set dd_name = 'Работает' %}
+                <option value='{{ dd }}' s='{{ creatSecret( 'gm_user-' ~ pole7 ~ '-' ~ v.id ~ '-'~ dd ) }}' 
+                        {% if v[pole7] is defined and v[pole7] == dd %} selected="selected" {% endif %} >
+                    {{ dd_name }}</option>
+            </select>
+
+        </td>
+    </tr>
+    <tr>
+        <td colspan="3" >
+
+            <div id="add_mod{{ k }}" {# % if v.access is defined and v.access == 'admin' %} style="display:none;" {% endif% #} >
+                <p><a href="#" onclick="$('#xadd_mod{{ k }}').toggle('slow');
+                        return false;" >Модули для доступа <sup>(скрыть/показать)</sup></a></p>
+
+
+                <form 
+                    class="base__send_form_ajax"
+
+                    action="/vendor/didrive_mod/admin_access/1/micro-service/save_access.php" 
+                    method="post"
+                    resto_id="res{{ k }}"
+
+
+                    user_id="{{ k }}" 
+                    {#for_res="res{{ k }}" #}
+                    {#id="xadd_mod{{ k }}" #}
+
+                    style="
+                    {% if v.access is not defined or ( v.access is defined and v.access != 'moder' ) %} display:none;  {% endif %} 
+                    border: 1px solid green; padding: 5px; max-height: 300px; overflow: auto;"
+
+                    >
+                    <br/>
+                    {# { pa(a_menu)|raw } #}
+
+                    {% for k1, v1 in a_menu if k1|length > 3  %}
+                        <label class="checkbox50">
+                            <input type="checkbox" 
+                                   name="mod[{{ v1['cfg.level'] }}]" value="da"
+                                   aria-label="Отметте для открытие доступа к данному моделю">
+                            <b>{{ v1.name }}</b> ( {{ v1['cfg.level'] }} )
+                            <sup><a href="/{{ v1['cfg.level'] }}/" target="_blank" >на сайте</a></sup>
+                        </label>
+                    {% endfor %}
+
+                    <input type="hidden" name="action" value="edit_moder_option">
+                    <input type="hidden" name="id" value="{{ v.id }}">
+                    <input type="hidden" name="s" value="{{ creatSecret(v.id) }}">
+
+                    <input type="submit" value="Сохранить" style="display:inline-block;" >
+                    <span style="display:inline-block;" id="res{{ k }}"></span>
+
+                    {# { pa(a_menu)|raw } #}
+                </form>
+            </div>
+
+
+        </td>
+    </tr>
+
+{% endspaceless %}

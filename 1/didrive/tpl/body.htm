@@ -1,10 +1,4 @@
-<style>
-    
-    sup{ display: none; }
-    tr:HOVER sup{ display: inline-block; }
-    
-</style>
-
+{% spaceless %}
 <div class="container-fluid" >
     <div class="grid">
 
@@ -13,7 +7,6 @@
 
                 <a onclick="$('#add1').toggle('slow');
                         return false;" href="" class="btn btn-xs btn-success"  type="button" style="float:right;">Добавить доступ</a>
-
                 <h3>Доп. доступ к Didrive</h3>
 
                 <br clear="all" />
@@ -57,174 +50,31 @@
                             
                         </form>
                     </div>
-                </div>                
+                </div>
 
             </div>
         </div>
-        {#
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        #}
-        {#{ folder ~ '_di' }#}
-        {% set list_user = getUsersDi( db, folder ~ '_di') %}
-        {#{ pa(list_user) }#}
-        {#                
-                    </div>
-                </div>
-        #}
+
+        {# f\pa($list_user,2) #}
+
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>
-                                ФИО, соц сеть<Br/>
-                                дата регистрации
-                            </th>
+                            <th>##</th>
+                            <th>ФИО, соц сеть</th>
                             <th>Доступ к дидрайв</th>
                             <th>Обозначение аккаунта для пользователей</th>
+                            <th>Действия</th>
                     </thead>
                     <tbody>
 
-                        {#
-                            <tr class="act" >
-                                <td rowspan="2">
-                                    {{ pa(post) }}
-                                </td>
-                            </tr>                        
-                        #}
+                        {% for v in list_user %}
+
+                            {% include '/vendor/didrive_mod/admin_access/1/didrive/tpl/body.list.item.htm' %}
                             
-                        {% for k, v in list_user %}
-
-                            <tr class="act" >
-                                <td rowspan="2">
-
-                                    {% if v.login is defined and v.login|length > 2  %} 
-                                        Логин: <b>{{ v.login }}</b> <sup>{{ k }}</sup>
-                                        <br/>
-                                        
-                                        <a href="#" 
-                                           onclick="$('#ff{{ k }}').toggle();return false;"
-                                           style="color:blue;">сменить пароль</a>
-                                        
-                                        <form action="" method="post" id="ff{{ k }}" style="display:none;" >
-
-                                            <input type="text" name="pass" value="" >
-                                            <input type="hidden" name="s" value="{{ creatSecret(k) }}" >
-                                            <input type="hidden" name="id" value="{{ k }}" >
-                                            <br/>
-                                            <input type="submit" name="set_new_pass" value="установить" >
-                                            
-                                        </form>
-                                        
-                                    {% else %}
-                                        {{ v.family }} {{ v.name }} <sup>{{ k }}</sup> <br/>
-                                        <a href="{{ v.soc_web_link }}"  style="color:blue;" target="_blank" >{{ v.soc_web }}</a>
-                                    {% endif %}
-
-                                    <br/>
-
-                                    <small style="color:gray;">
-                                        {{ v.dt[0:16] }}
-                                    </small>
-
-                                </td>
-                                <td>
-
-                                    {#
-                                    {% set k12 = '123' %}
-                                    {% set ee = 'gm_user-access-' ~ k12 ~ '-block' %}
-                                    {{ ee }}
-                                    #}
-
-                                    {# { creatSecret( 'gm_user-access-' ~ k ~ '-block' ) } #}
-
-                                    {% if v.access == 'admin' and 1 == 2 %}
-                                        Администратор                        
-                                    {% else %}
-                                        <select class='form-control save_edit_select' 
-                                                action='/didrive/ajax.php' 
-                                                pole="access" 
-                                                table="gm_user" 
-                                                rev='{{ k }}' 
-                                                >
-                                            <option value='block' s='{{ creatSecret( 'gm_user-access-' ~ k ~ 'block' ) }}' 
-                                                    {% if v.access is defined and v.access == 'block' %} selected="selected" {% endif %} >
-                                                Доступ закрыт</option>
-                                            <option value='admin' s='{{ creatSecret( 'gm_user-access-' ~ k ~ 'admin' ) }}' 
-                                                    {% if v.access is defined and v.access == 'admin' %} selected="selected" {% endif %} >
-                                                Полный доступ ( администратор )</option>
-                                            <option value='moder' s='{{ creatSecret( 'gm_user-access-' ~ k ~ 'moder' ) }}' 
-                                                    {% if v.access is defined and v.access == 'moder' %} selected="selected" {% endif %} >
-                                                Ограниченный доступ ( модератор )</option>
-                                        </select>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if v.access != 'admin' or 1 == 1 %}
-                                        <input type='text' max='99' min='1' 
-                                               class="edit_pole form-control" 
-                                               table="gm_user"
-                                               name='name'
-                                               rev="{{ k }}"
-                                               value='{{ v.name }}' 
-                                               folder='{{ folder }}_di' 
-                                               s='{{ creatSecret( 'edit_pole-gm_user-name-' ~ k ) }}' 
-                                               style="x-width:50px;" />
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" >
-
-                                    <div id="add_mod{{ k }}" {# % if v.access is defined and v.access == 'admin' %} style="display:none;" {% endif% #} >
-                                        <p><a href="#" onclick="$('#xadd_mod{{ k }}').toggle('slow');
-                                                return false;" >Модули для доступа <sup>(скрыть/показать)</sup></a></p>
-                                        <form 
-                                            class="moder_option"
-                                            action="" method="post"
-                                            user_id="{{ k }}" 
-                                            for_res="res{{ k }}" 
-                                            id="xadd_mod{{ k }}" 
-                                            {% if v.access is not defined or ( v.access is defined and v.access != 'moder' ) %} style="display:none;" {% endif %} 
-                                            >
-                                            <br/>
-                                            {# { pa(a_menu)|raw } #}
-
-                                            {#{ pa(v.access) }#}
-                                            
-                                            {% for k1, v1 in a_menu if k1|length > 3  %}
-                                                <label class="checkbox50 {% if v.access[v1['cfg.level']] %} ok {% endif %}" 
-                                                       >
-                                                    
-                                                    <input type="checkbox" 
-                                                           name="mod[{{ v1['cfg.level'] }}]" value="da"
-                                                  
-                                                           {% if v.access[v1['cfg.level']] %}
-                                                           checked="checked"
-                                                           {% endif %}
-                                                           
-                                                           aria-label="Отметте для открытие доступа к данному моделю"
-                                                           >
-                                                    <b>{{ v1.name }}</b> ( {{ v1['cfg.level'] }} )
-                                                    <sup><a href="/{{ v1['cfg.level'] }}/" target="_blank" >на сайте</a></sup>
-                                                </label>
-                                            {% endfor %}
-
-                                            <input type="hidden" name="action" value="edit_moder_option">
-                                            <input type="hidden" name="id" value="{{ v.id }}">
-                                            <input type="hidden" name="s" value="{{ creatSecret(v.id) }}">
-                                            <input type="submit" value="Сохранить" style="display:inline-block;" >
-                                            <span style="display:inline-block;" id="res{{ k }}"></span>
-
-                                            {# { pa(a_menu)|raw } #}
-                                        </form>
-                                    </div>
-
-
-                                </td>
-                            </tr>
                         {% endfor %}
                     </tbody>     
                 </table>     
@@ -233,3 +83,4 @@
 
     </div>
 </div>
+{% endspaceless %}

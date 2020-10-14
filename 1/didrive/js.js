@@ -334,7 +334,8 @@ $().ready(function () {
         $.ajax({
 
             type: 'POST',
-            url: '/vendor/didrive_mod/admin_access/1/didrive/ajax.php',
+            // url: '/vendor/didrive_mod/admin_access/1/didrive/ajax.php',
+            url: '/vendor/didrive_mod/admin_access/1/micro-service/save_access.php',
             dataType: 'json',
             data: $ff,
 
