@@ -1,3 +1,4 @@
+
 .list_data img{
 	max-height: 150px;
 	max-width: 150px;
@@ -74,7 +75,7 @@ display: inline-block;
 	font-weight: normal;
 }
 .items_opt label:HOVER{
-    rgba(0,0,0,0.1);
+    background-color: rgba(0,0,0,0.1);
 }
 
 .act .delete{ display:none;}
