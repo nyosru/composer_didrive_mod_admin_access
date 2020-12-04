@@ -18,10 +18,10 @@ class AdminAccess {
         $folder = \Nyos\nyos::$folder_now;
         
         $sql = 'DELETE FROM `gm_user_di_mod` WHERE `folder` = :folder AND `user_id` = :user ';
-        \f\pa($sql);
+        // \f\pa($sql);
         $ff = $db->prepare($sql);
         $i = array(':folder' => $folder, ':user' => $user);
-        \f\pa($i);
+        // \f\pa($i);
         $ff->execute($i);
         
         $rows = [];
